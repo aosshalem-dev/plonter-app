@@ -1,0 +1,1607 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    direction: rtl;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+/* Sections */
+section {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+    margin-bottom: 20px;
+    color: #667eea;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+}
+
+/* Sentence Container */
+.sentence-container {
+    display: flex;
+    flex-wrap: nowrap; /* Prevent wrapping to new lines */
+    gap: 15px 20px; /* Reduced gap to prevent wrapping */
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    min-height: 100px;
+    position: relative;
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+}
+
+.word-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.add-pos-btn {
+    margin-top: 5px;
+}
+
+.word-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 10px 15px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.word-block:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+}
+
+.word-block.pencil-mode-word {
+    cursor: pointer;
+}
+
+.word-block.arch-selected {
+    border-color: #667eea;
+    background: #e6f0ff;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.word-text {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    font-family: 'Arial', 'Times New Roman', serif;
+}
+
+.add-pos-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-pos-btn:hover {
+    background: #5568d3;
+    transform: scale(1.1);
+}
+
+.add-pos-btn:active {
+    transform: scale(0.95);
+}
+
+/* Parts of Speech Display outside word block */
+.word-parts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    min-height: 35px;
+}
+
+.part-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 2px solid;
+    z-index: 10;
+}
+
+/* Column 0 - כינוי רמז, כינוי גוף - כחול */
+.part-tag.pos-column-0 {
+    background: #e3f2fd;
+    border-color: #90caf9;
+    color: #1976d2;
+}
+
+.part-tag.pos-column-0:hover {
+    background: #2196f3;
+    border-color: #2196f3;
+    color: white;
+}
+
+/* Column 1 - שם עצם, שם תואר - סגול */
+.part-tag.pos-column-1 {
+    background: #f3e5f5;
+    border-color: #ce93d8;
+    color: #7b1fa2;
+}
+
+.part-tag.pos-column-1:hover {
+    background: #9c27b0;
+    border-color: #9c27b0;
+    color: white;
+}
+
+/* Column 2 - פועל, תואר הפועל - ירוק */
+.part-tag.pos-column-2 {
+    background: #e8f5e9;
+    border-color: #a5d6a7;
+    color: #388e3c;
+}
+
+.part-tag.pos-column-2:hover {
+    background: #4caf50;
+    border-color: #4caf50;
+    color: white;
+}
+
+/* Column 3 - מילית יחס, מילת שאלה - כתום */
+.part-tag.pos-column-3 {
+    background: #fff3e0;
+    border-color: #ffcc80;
+    color: #e65100;
+}
+
+.part-tag.pos-column-3:hover {
+    background: #ff9800;
+    border-color: #ff9800;
+    color: white;
+}
+
+.part-tag.selected {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+}
+
+.part-type {
+    font-weight: bold;
+}
+
+.edit-icon {
+    font-size: 0.8em;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    margin-right: 5px;
+}
+
+.edit-icon:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.delete-icon {
+    font-size: 1.1em;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.delete-icon:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    color: #dc3545;
+}
+
+.part-tag.delete-mode {
+    border-style: dashed;
+    opacity: 0.8;
+}
+
+.part-tag.delete-mode:hover {
+    opacity: 1;
+    border-color: #dc3545;
+}
+
+/* Combination lines SVG */
+#combination-lines-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: visible;
+}
+
+/* Arch SVG */
+#arch-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: visible;
+}
+
+.part-tag.arch-selected {
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.8);
+    border-color: #667eea;
+    border-width: 3px;
+}
+
+.part-tag.connected {
+    box-shadow: 0 0 8px rgba(72, 187, 120, 0.6);
+}
+
+.btn.active {
+    background: #667eea;
+    color: white;
+    font-weight: bold;
+}
+
+/* Model selection modal */
+.model-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.model-btn {
+    padding: 20px;
+    background: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.model-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.syntactic-role-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.role-btn {
+    padding: 15px 20px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.role-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.role-btn.selected {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    font-weight: bold;
+}
+
+.model-btn.selected {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    font-weight: bold;
+}
+
+.arch-properties {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.property-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.property-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+}
+
+.property-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    direction: rtl;
+    background: white;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.clause-properties {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.validation-info {
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+.gender-number-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.gender-number-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 15px 10px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+}
+
+.gender-number-btn:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+}
+
+.gender-number-btn.selected {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    font-weight: bold;
+}
+
+.gender-number-btn .symbol {
+    font-size: 1.5em;
+}
+
+.gender-number-btn .label-text {
+    font-size: 0.85em;
+    text-align: center;
+}
+
+.clause-role-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.clause-role-btn {
+    padding: 12px 15px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+.clause-role-btn:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Logical connection options */
+.logical-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.logical-btn {
+    padding: 20px;
+    background: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.logical-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.logical-connection-icon {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+}
+
+.btn-secondary {
+    background: #718096;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4a5568;
+}
+
+.btn-secondary.active {
+    background: #dc3545;
+}
+
+.btn-secondary.active:hover {
+    background: #c82333;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideDown 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.modal-content h3 {
+    margin-bottom: 20px;
+    color: #667eea;
+}
+
+/* Part of Speech Options - 4 columns, 2 rows */
+.pos-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.pos-option {
+    padding: 20px 15px;
+    background: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+/* Column 1 - כינוי רמז, כינוי גוף */
+.pos-option.pos-column-0 {
+    background: #e3f2fd;
+    border-color: #90caf9;
+}
+
+.pos-option.pos-column-0:hover {
+    background: #2196f3;
+    color: white;
+    border-color: #2196f3;
+}
+
+/* Column 2 - שם עצם, שם תואר */
+.pos-option.pos-column-1 {
+    background: #f3e5f5;
+    border-color: #ce93d8;
+}
+
+.pos-option.pos-column-1:hover {
+    background: #9c27b0;
+    color: white;
+    border-color: #9c27b0;
+}
+
+/* Column 3 - פועל, תואר הפועל */
+.pos-option.pos-column-2 {
+    background: #e8f5e9;
+    border-color: #a5d6a7;
+}
+
+.pos-option.pos-column-2:hover {
+    background: #4caf50;
+    color: white;
+    border-color: #4caf50;
+}
+
+/* Column 4 - מילית יחס, מילת שאלה */
+.pos-option.pos-column-3 {
+    background: #fff3e0;
+    border-color: #ffcc80;
+}
+
+.pos-option.pos-column-3:hover {
+    background: #ff9800;
+    color: white;
+    border-color: #ff9800;
+}
+
+/* Details Panel (side, not covering content) */
+.details-panel {
+    position: fixed;
+    right: -450px;
+    top: 0;
+    bottom: 0;
+    width: 400px;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+}
+
+.details-panel.show {
+    right: 0;
+}
+
+/* Add margin to main content when panel is open (RTL - margin on right) */
+body.panel-open .container {
+    margin-right: 400px;
+}
+
+.details-panel-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px;
+}
+
+.details-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eee;
+}
+
+.details-panel-header h3 {
+    margin: 0;
+    color: #667eea;
+    font-size: 1.3em;
+}
+
+.close-panel-btn {
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.close-panel-btn:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.details-panel-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+}
+
+/* Details Form */
+.details-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #555;
+    font-size: 0.95em;
+}
+
+.form-group select,
+.form-group input {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    direction: rtl;
+    background: white;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Combinations */
+.combinations-controls {
+    margin-bottom: 20px;
+}
+
+.combinations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.combination-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
+.combination-item.incomplete {
+    border-color: #f6ad55;
+    background: #fffaf0;
+}
+
+.combination-item.invalid {
+    border-color: #fc8181;
+    background: #fff5f5;
+}
+
+.combination-item.valid {
+    border-color: #48bb78;
+    background: #f0fff4;
+}
+
+.combination-result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.combination-result.valid {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.combination-result.invalid {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.combination-result.incomplete {
+    background: #feebc8;
+    color: #7c2d12;
+}
+
+/* Validation Messages */
+.validation-messages {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    z-index: 999;
+}
+
+.validation-message {
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    animation: slideInUp 0.3s;
+}
+
+.validation-message.error {
+    background: #fc8181;
+    color: #742a2a;
+    border-right: 4px solid #c53030;
+}
+
+.validation-message.warning {
+    background: #f6ad55;
+    color: #7c2d12;
+    border-right: 4px solid #dd6b20;
+}
+
+.validation-message.info {
+    background: #90cdf4;
+    color: #2c5282;
+    border-right: 4px solid #3182ce;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Welcome Screen */
+.welcome-screen {
+    min-height: 100vh;
+    background: #f5f5f5;
+    padding: 20px;
+}
+
+.welcome-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.welcome-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+}
+
+.welcome-header h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.search-section {
+    margin-bottom: 30px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 1.1em;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    direction: rtl;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.stages-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.category-section {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.category-title {
+    color: #667eea;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #667eea;
+    font-size: 1.5em;
+}
+
+.stages-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.stage-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stage-item:hover {
+    background: #e9e9e9;
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+}
+
+.stage-number {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #667eea;
+    min-width: 50px;
+    text-align: center;
+}
+
+.stage-sentence {
+    flex: 1;
+    font-size: 1.1em;
+    font-family: 'Arial', 'Times New Roman', serif;
+    direction: rtl;
+    text-align: right;
+}
+
+.game-screen {
+    min-height: 100vh;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    .sentence-container {
+        gap: 10px;
+    }
+
+    .word-text {
+        font-size: 1.1em;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .stages-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .stage-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .stage-number {
+        min-width: auto;
+    }
+}
+
+/* Hierarchical PoS Selection */
+.pos-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pos-option.pos-primary {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    font-size: 1.2em;
+}
+
+.pos-icon {
+    font-size: 1.5em;
+}
+
+.pos-option.pos-back {
+    background: #e0e0e0;
+    color: #333;
+    font-weight: bold;
+}
+
+.pos-option.pos-back:hover {
+    background: #bdbdbd;
+}
+
+.pos-option.pos-subtype {
+    padding: 15px;
+    text-align: right;
+    padding-right: 30px;
+}
+
+/* Multi-value inputs */
+.multi-value-wrapper {
+    margin-bottom: 20px;
+}
+
+.multi-value-wrapper label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #555;
+}
+
+.multi-values-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.single-value-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.single-value-item input,
+.single-value-item select {
+    flex: 1;
+    padding: 8px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+}
+
+.remove-value-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-value-btn:hover {
+    background: #c82333;
+}
+
+.add-value-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.add-value-btn:hover {
+    background: #218838;
+}
+
+/* Verb Forms Buttons */
+.verb-forms-group {
+    margin-bottom: 20px;
+}
+
+.verb-forms-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.verb-form-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 12px 8px;
+    background: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+}
+
+.verb-form-btn:hover {
+    background: #e9e9e9;
+    border-color: #667eea;
+}
+
+.verb-form-btn.selected {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.form-number {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.form-arabic {
+    font-family: 'Arial', 'Times New Roman', serif;
+    font-size: 1.1em;
+    direction: rtl;
+}
+
+/* Multi-checkbox (Cases) */
+.checkbox-group {
+    margin-bottom: 20px;
+}
+
+.checkboxes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-item label {
+    cursor: pointer;
+    font-weight: normal;
+}
+
+/* Enhanced connection lines */
+#combination-lines-svg {
+    z-index: 1;
+}
+
+.part-tag {
+    z-index: 10;
+    position: relative;
+}
+
+.part-tag.connected {
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+}
+
+/* Connection line colors */
+.combination-line.complete {
+    stroke: #48bb78;
+    stroke-width: 5;
+}
+
+.combination-line.incomplete {
+    stroke: #f6ad55;
+    stroke-width: 5;
+}
+
+.combination-line.invalid {
+    stroke: #fc8181;
+    stroke-width: 5;
+}
+
+.combination-line.demonstrative {
+    stroke: #6b46c1;
+    stroke-width: 6;
+}
+
+/* Syntactic role button colors */
+.role-btn.role-subject-predicate {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.role-btn.role-subject-predicate:hover {
+    background-color: #2563eb;
+}
+
+.role-btn.role-subject-predicate.selected {
+    background-color: #1d4ed8;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.role-btn.role-object-description {
+    background-color: #10b981;
+    color: white;
+}
+
+.role-btn.role-object-description:hover {
+    background-color: #059669;
+}
+
+.role-btn.role-object-description.selected {
+    background-color: #047857;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+.role-btn.role-nucleus-adjunct {
+    background-color: #f97316;
+    color: white;
+}
+
+.role-btn.role-nucleus-adjunct:hover {
+    background-color: #ea580c;
+}
+
+.role-btn.role-nucleus-adjunct.selected {
+    background-color: #c2410c;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
+}
+
+/* Verb time buttons */
+.verb-time-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.verb-time-btn {
+    padding: 10px 20px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.verb-time-btn:hover {
+    background: #f0f4ff;
+}
+
+.verb-time-btn.selected {
+    background: #667eea;
+    color: white;
+}
+
+.verb-time-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Verb voice buttons */
+.verb-voice-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.verb-voice-btn {
+    flex: 1;
+    padding: 15px 30px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.verb-voice-btn:hover {
+    background: #f0f4ff;
+}
+
+.verb-voice-btn.selected {
+    background: #667eea;
+    color: white;
+}
+
+/* Gender/Number buttons (like verb forms) */
+.gender-number-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.gender-number-btn {
+    padding: 15px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.gender-number-btn .symbol {
+    font-size: 20px;
+}
+
+.gender-number-btn:hover {
+    background: #f0f4ff;
+}
+
+.gender-number-btn.selected {
+    background: #667eea;
+    color: white;
+}
+
+/* Model indicator */
+#model-indicator {
+    font-weight: bold;
+    font-size: 18px;
+    color: #667eea;
+    padding: 5px 15px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+}
+
+/* Syntactic role grid 4x3 */
+.role-grid-4x3 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.role-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.role-column-green {
+    background: rgba(16, 185, 129, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.role-column-purple {
+    background: rgba(139, 92, 246, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.role-column-blue {
+    background: rgba(59, 130, 246, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.role-column-orange {
+    background: rgba(249, 115, 22, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.role-preposition-phrase {
+    background-color: #f97316;
+    color: white;
+}
+
+.role-preposition-phrase:hover {
+    background-color: #ea580c;
+}
+
+.role-preposition-phrase.selected {
+    background-color: #c2410c;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
+}
+
+/* Gender/Number table 2x3 */
+.gender-number-container-2x3 {
+    margin-top: 10px;
+}
+
+.gender-number-table-2x3 {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.gender-number-table-2x3 th,
+.gender-number-table-2x3 td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+}
+
+.gender-number-table-2x3 th {
+    background: #f3f4f6;
+    font-weight: bold;
+}
+
+.gender-number-table-2x3 .number-header {
+    background: #f9fafb;
+    font-weight: bold;
+}
+
+.gender-number-cell-btn {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.gender-number-cell-btn .symbol {
+    font-size: 20px;
+}
+
+.gender-number-cell-btn:hover {
+    background: #f0f4ff;
+}
+
+.gender-number-cell-btn.selected {
+    background: #667eea;
+    color: white;
+}
+
+/* Definiteness buttons with indicator */
+.definiteness-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.definiteness-btn {
+    flex: 1;
+    padding: 20px;
+    border: 3px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.definiteness-indicator {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid #667eea;
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.definiteness-text {
+    font-size: 18px;
+}
+
+.definiteness-btn:hover {
+    background: #f0f4ff;
+}
+
+.definiteness-btn.selected {
+    background: #667eea;
+    color: white;
+}
+
+.definiteness-btn.selected .definiteness-indicator {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+/* Incomplete chain styling - yellow borders for incomplete phrases */
+.part-tag.incomplete-chain {
+    border-color: #fbbf24 !important;
+    border-width: 3px !important;
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+/* Role grid for syntactic roles modal */
+.role-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.role-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+}

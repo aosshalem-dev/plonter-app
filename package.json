@@ -1,0 +1,44 @@
+{
+  "name": "plonter-arabic-syntax-analyzer",
+  "version": "1.0.0",
+  "description": "Educational web application for Arabic syntax analysis with Hebrew interface",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "python3 -m http.server 8000",
+    "test": "echo 'No automated tests - see DEVELOPMENT.md for manual testing guidelines'",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "arabic",
+    "syntax",
+    "grammar",
+    "education",
+    "hebrew",
+    "linguistics",
+    "learning",
+    "analysis",
+    "nlp"
+  ],
+  "author": "Educational Project",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/username/plonter-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/plonter-app/issues"
+  },
+  "homepage": "https://github.com/username/plonter-app#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie <= 11"
+  ]
+}

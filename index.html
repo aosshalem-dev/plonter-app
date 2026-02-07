@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פלונטר - ניתוח תחבירי בערבית</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="welcome-screen">
+        <div class="welcome-container">
+            <header class="welcome-header">
+                <h1>פלונטר</h1>
+                <p class="subtitle">לומדים עקרונות בסיסיים בעת ניתוח תחבירי של משפטים בערבית</p>
+            </header>
+            
+            <div class="search-section">
+                <input type="text" id="stage-search" class="search-input" placeholder="חפש שלב או משפט...">
+            </div>
+            
+            <div class="stages-container">
+                <div class="category-section">
+                    <h2 class="category-title">חוברת</h2>
+                    <div id="stages-workbook" class="stages-list">
+                        <!-- Stages will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="category-section">
+                    <h2 class="category-title">תרגיל אמצע</h2>
+                    <div id="stages-midterm" class="stages-list">
+                        <!-- Stages will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Game Screen -->
+    <div id="game-screen" class="game-screen" style="display: none;">
+        <div class="container">
+            <header>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>פלונטר</h1>
+                    <button id="back-to-menu-btn" class="btn btn-secondary">חזרה לתפריט</button>
+                </div>
+                <p class="subtitle">לומדים עקרונות בסיסיים בעת ניתוח תחבירי של משפטים בערבית</p>
+            </header>
+
+            <main>
+            <!-- Sentence Display Area -->
+            <section class="sentence-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative;">
+                    <h2 style="margin: 0;">המשפט:</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="logical-connection-mode-btn" class="btn btn-secondary" title="מצב קשר לוגי">🔗 קשר לוגי</button>
+                        <button id="delete-mode-btn" class="btn btn-secondary">🗑️ מחק</button>
+                    </div>
+                    <div id="model-indicator" style="position: absolute; top: 0; left: 0; font-weight: bold; font-size: 16px; color: #667eea; display: none;"></div>
+                </div>
+                <div id="sentence-container" class="sentence-container">
+                    <!-- Words with parts of speech will be rendered here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Validation Messages -->
+            <div id="validation-messages" class="validation-messages"></div>
+        </main>
+    </div>
+
+    <!-- Modal for Part of Speech Selection -->
+    <div id="pos-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>בחר חלק דיבר</h3>
+            <div id="pos-options" class="pos-options">
+                <!-- Part of speech options will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Panel (bottom) -->
+    <div id="details-panel" class="details-panel">
+        <div class="details-panel-content">
+            <div class="details-panel-header">
+                <h3 id="details-panel-title">פרטי חלק דיבר</h3>
+                <button class="close-panel-btn" onclick="closeDetailsPanel()">&times;</button>
+            </div>
+            <div id="details-panel-form" class="details-form">
+                <!-- Detail form will be populated here -->
+            </div>
+            <div class="details-panel-actions">
+                <button id="save-details-btn" class="btn btn-primary" onclick="savePartOfSpeechDetails()">שמור</button>
+                <button class="btn btn-secondary" onclick="closeDetailsPanel()">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/stages.js"></script>
+    <script src="js/partsOfSpeech.js"></script>
+    <script src="js/word.js"></script>
+    <script src="js/combinations.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
