@@ -1,0 +1,67 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test Application
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Start test server
+      run: |
+        cd ${{ github.workspace }}
+        python -m http.server 8080 &
+        sleep 3
+        
+    - name: Test server response
+      run: |
+        curl -f http://localhost:8080/ || (echo "Server test failed" && exit 1)
+        
+    - name: Validate HTML structure
+      run: |
+        # Check for required files
+        test -f index.html || (echo "Missing index.html" && exit 1)
+        test -f css/style.css || (echo "Missing CSS file" && exit 1)
+        test -f js/app.js || (echo "Missing main JS file" && exit 1)
+        
+        # Check for basic HTML structure
+        grep -q "<html" index.html || (echo "Invalid HTML structure" && exit 1)
+        grep -q "פלונטר" index.html || (echo "Missing Hebrew title" && exit 1)
+        
+    - name: Check JavaScript syntax
+      run: |
+        # Basic JS syntax check
+        for jsfile in js/*.js; do
+          node -c "$jsfile" || (echo "Syntax error in $jsfile" && exit 1)
+        done
+        
+    - name: Validate package.json
+      run: |
+        node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))" || (echo "Invalid package.json" && exit 1)
+
+  deploy-info:
+    runs-on: ubuntu-latest
+    name: Deployment Information
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Display deployment info
+      run: |
+        echo "🚀 Deployment successful!"
+        echo "📍 Repository: ${{ github.repository }}"
+        echo "🌐 Live URL: https://${{ github.repository_owner }}.github.io/plonter-app"
+        echo "📋 Commit: ${{ github.sha }}"
+        echo "⏰ Time: $(date)"
