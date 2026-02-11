@@ -68,8 +68,7 @@ section h2 {
     border-radius: 8px;
     min-height: 100px;
     position: relative;
-    overflow-x: auto; /* Allow horizontal scrolling if needed */
-    overflow-y: visible; /* Allow roofs to extend above */
+    overflow: visible; /* Allow roofs to extend above - both axes must be visible per CSS spec */
 }
 
 .word-wrapper {
@@ -286,7 +285,7 @@ section h2 {
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: auto; /* Allow interaction with roofs */
+    pointer-events: none; /* Pass clicks through to words underneath */
     z-index: 2;
     overflow: visible;
 }

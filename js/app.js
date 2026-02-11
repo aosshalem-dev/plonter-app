@@ -897,7 +897,7 @@ function renderArches() {
     svg.style.left = '0';
     svg.style.width = '100%';
     svg.style.height = '100%';
-    svg.style.pointerEvents = 'auto';
+    svg.style.pointerEvents = 'none';
     svg.style.zIndex = '2'; // Above combination lines, below badges
     svg.style.overflow = 'visible'; // Ensure lines aren't clipped
     
@@ -995,6 +995,7 @@ function renderArches() {
                 // Create group for this arch
                 const archGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                 archGroup.dataset.archId = arch.id;
+                archGroup.style.pointerEvents = 'auto';
                 
                 if (isSingleWord) {
                     // Single word: rectangle without bottom (two vertical lines + horizontal line on top)
