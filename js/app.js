@@ -897,8 +897,9 @@ function renderArches() {
     svg.style.left = '0';
     svg.style.width = '100%';
     svg.style.height = '100%';
-    svg.style.pointerEvents = deleteMode ? 'auto' : 'auto';
+    svg.style.pointerEvents = 'auto';
     svg.style.zIndex = '2'; // Above combination lines, below badges
+    svg.style.overflow = 'visible'; // Ensure lines aren't clipped
     
     const containerRect = container.getBoundingClientRect();
     
@@ -937,25 +938,30 @@ function renderArches() {
                 
                 if (isSingleWord) {
                     // Single word: rectangle without bottom (two vertical lines connected by horizontal line on top)
-                    rightEdge = rect1.left - containerRect.left; // Right edge (smaller x in RTL)
-                    leftEdge = rect1.left + rect1.width - containerRect.left; // Left edge (larger x in RTL)
-                    rightY = rect1.top - containerRect.top;
+                    // In RTL: left side of screen = smaller x, right side = larger x
+                    // For word boundary: left edge (smaller x) to right edge (larger x)
+                    leftEdge = rect1.left - containerRect.left; // Left edge of word
+                    rightEdge = rect1.left + rect1.width - containerRect.left; // Right edge of word
                     leftY = rect1.top - containerRect.top;
+                    rightY = rect1.top - containerRect.top;
                 } else {
-                    // Two words: determine which is first (right) and which is second (left) in RTL
-                    // In RTL, smaller index appears first (on the right), larger index appears later (on the left)
+                    // Two words: roof spans from the rightmost word to the leftmost word
+                    // In RTL: words flow right-to-left, but on screen, left side = smaller x, right side = larger x
+                    // We want to draw from the outer edges of both words
                     const firstIndex = Math.min(index1, index2);
                     const secondIndex = Math.max(index1, index2);
-                    
+
                     // Get the word blocks for first and second
                     const firstWordId = firstIndex === index1 ? arch.wordId1 : arch.wordId2;
                     const secondWordId = secondIndex === index2 ? arch.wordId2 : arch.wordId1;
                     const firstRect = firstWordId === arch.wordId1 ? rect1 : rect2;
                     const secondRect = secondWordId === arch.wordId2 ? rect2 : rect1;
-                    
-                    // Draw from RIGHT edge of first word (smaller x) to LEFT edge of second word (larger x)
-                    rightEdge = firstRect.left - containerRect.left; // Right edge of first word
-                    leftEdge = secondRect.left + secondRect.width - containerRect.left; // Left edge of second word
+
+                    // For RTL: first word (lower index) appears on right side of screen (higher x)
+                    // second word (higher index) appears on left side of screen (lower x)
+                    // Draw from right edge of first word to left edge of second word
+                    rightEdge = firstRect.left + firstRect.width - containerRect.left; // Right edge of first word (rightmost position)
+                    leftEdge = secondRect.left - containerRect.left; // Left edge of second word (leftmost position)
                     rightY = firstRect.top - containerRect.top;
                     leftY = secondRect.top - containerRect.top;
                 }
@@ -992,65 +998,65 @@ function renderArches() {
                 
                 if (isSingleWord) {
                     // Single word: rectangle without bottom (two vertical lines + horizontal line on top)
-                    // Left vertical line
+                    // Left vertical line (at left edge)
                     const verticalLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    verticalLine1.setAttribute('x1', rightEdge);
-                    verticalLine1.setAttribute('y1', rightY);
-                    verticalLine1.setAttribute('x2', rightEdge);
+                    verticalLine1.setAttribute('x1', leftEdge);
+                    verticalLine1.setAttribute('y1', leftY);
+                    verticalLine1.setAttribute('x2', leftEdge);
                     verticalLine1.setAttribute('y2', roofY);
                     verticalLine1.setAttribute('stroke', strokeColor);
                     verticalLine1.setAttribute('stroke-width', strokeWidth);
-                    
-                    // Top horizontal line
+
+                    // Top horizontal line (connects left to right)
                     const horizontalLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    horizontalLine.setAttribute('x1', rightEdge);
+                    horizontalLine.setAttribute('x1', leftEdge);
                     horizontalLine.setAttribute('y1', roofY);
-                    horizontalLine.setAttribute('x2', leftEdge);
+                    horizontalLine.setAttribute('x2', rightEdge);
                     horizontalLine.setAttribute('y2', roofY);
                     horizontalLine.setAttribute('stroke', strokeColor);
                     horizontalLine.setAttribute('stroke-width', strokeWidth);
-                    
-                    // Right vertical line
+
+                    // Right vertical line (at right edge)
                     const verticalLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    verticalLine2.setAttribute('x1', leftEdge);
+                    verticalLine2.setAttribute('x1', rightEdge);
                     verticalLine2.setAttribute('y1', roofY);
-                    verticalLine2.setAttribute('x2', leftEdge);
-                    verticalLine2.setAttribute('y2', leftY);
+                    verticalLine2.setAttribute('x2', rightEdge);
+                    verticalLine2.setAttribute('y2', rightY);
                     verticalLine2.setAttribute('stroke', strokeColor);
                     verticalLine2.setAttribute('stroke-width', strokeWidth);
-                    
+
                     archGroup.appendChild(verticalLine1);
                     archGroup.appendChild(horizontalLine);
                     archGroup.appendChild(verticalLine2);
                 } else {
                     // Two words: large roof over both words
-                    // Vertical line from right word (first word)
+                    // Left vertical line (at leftmost position)
                     const verticalLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    verticalLine1.setAttribute('x1', rightEdge);
-                    verticalLine1.setAttribute('y1', rightY);
-                    verticalLine1.setAttribute('x2', rightEdge);
+                    verticalLine1.setAttribute('x1', leftEdge);
+                    verticalLine1.setAttribute('y1', leftY);
+                    verticalLine1.setAttribute('x2', leftEdge);
                     verticalLine1.setAttribute('y2', roofY);
                     verticalLine1.setAttribute('stroke', strokeColor);
                     verticalLine1.setAttribute('stroke-width', strokeWidth);
-                    
-                    // Horizontal roof line
+
+                    // Horizontal roof line (spans from left to right)
                     const horizontalLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    horizontalLine.setAttribute('x1', rightEdge);
+                    horizontalLine.setAttribute('x1', leftEdge);
                     horizontalLine.setAttribute('y1', roofY);
-                    horizontalLine.setAttribute('x2', leftEdge);
+                    horizontalLine.setAttribute('x2', rightEdge);
                     horizontalLine.setAttribute('y2', roofY);
                     horizontalLine.setAttribute('stroke', strokeColor);
                     horizontalLine.setAttribute('stroke-width', strokeWidth);
-                    
-                    // Vertical line to left word (second word)
+
+                    // Right vertical line (at rightmost position)
                     const verticalLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    verticalLine2.setAttribute('x1', leftEdge);
+                    verticalLine2.setAttribute('x1', rightEdge);
                     verticalLine2.setAttribute('y1', roofY);
-                    verticalLine2.setAttribute('x2', leftEdge);
-                    verticalLine2.setAttribute('y2', leftY);
+                    verticalLine2.setAttribute('x2', rightEdge);
+                    verticalLine2.setAttribute('y2', rightY);
                     verticalLine2.setAttribute('stroke', strokeColor);
                     verticalLine2.setAttribute('stroke-width', strokeWidth);
-                    
+
                     archGroup.appendChild(verticalLine1);
                     archGroup.appendChild(horizontalLine);
                     archGroup.appendChild(verticalLine2);
@@ -1075,18 +1081,23 @@ function renderArches() {
                 if (labelText) {
                     const labelY = roofY - 25;
                     const labelX = (rightEdge + leftEdge) / 2;
-                    
+
+                    // Calculate dynamic width based on text length
+                    // Approximate: Hebrew chars are ~8-10px each at 11px font
+                    const estimatedTextWidth = labelText.length * 9;
+                    const labelWidth = Math.max(70, estimatedTextWidth + 20); // Min 70px, with 20px padding
+
                     const labelBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                    labelBg.setAttribute('x', labelX - 35);
+                    labelBg.setAttribute('x', labelX - (labelWidth / 2));
                     labelBg.setAttribute('y', labelY - 12);
-                    labelBg.setAttribute('width', 70);
+                    labelBg.setAttribute('width', labelWidth);
                     labelBg.setAttribute('height', 24);
                     labelBg.setAttribute('rx', 4);
                     labelBg.setAttribute('fill', 'white');
                     labelBg.setAttribute('stroke', strokeColor);
                     labelBg.setAttribute('stroke-width', '2');
                     labelBg.style.cursor = 'pointer';
-                    
+
                     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                     label.setAttribute('x', labelX);
                     label.setAttribute('y', labelY + 4);
@@ -1190,104 +1201,8 @@ function getModelColor(model) {
 
 // Open syntactic role modal for a NEW arch (pending arch - only added if role selected)
 function openSyntacticRoleModalForNewArch(pendingArch) {
-    // Create or get syntactic role selection modal
-    let modal = document.getElementById('syntactic-role-modal');
-    if (!modal) {
-        // Create the modal (will be done in openSyntacticRoleModal)
-        openSyntacticRoleModal(pendingArch);
-        return;
-    }
-
-    // Clear previous selections
-    modal.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('selected'));
-    modal.querySelectorAll('.clause-model-btn').forEach(btn => btn.classList.remove('selected'));
-    modal.querySelector('#clause-mode-toggle').checked = false;
-    modal.querySelector('#clause-model-options').style.display = 'none';
-
-    // Update button labels back to normal (in case clause mode was on)
-    modal.querySelectorAll('.role-btn').forEach(btn => {
-        const role = btn.dataset.role;
-        if (role) btn.textContent = role;
-    });
-
-    // Store pending arch reference
-    modal._pendingArch = pendingArch;
-    modal._isNewArch = true;
-
-    // Override save button for new arch
-    const saveBtn = modal.querySelector('#save-syntactic-role');
-    saveBtn.onclick = () => {
-        const selectedBtn = modal.querySelector('.role-btn.selected');
-        if (!selectedBtn || !selectedBtn.dataset.role) {
-            showValidationMessage('יש לבחור חלק תחבירי כדי ליצור גג', 'error');
-            return;
-        }
-
-        const role = selectedBtn.dataset.role;
-        const isClauseMode = modal.querySelector('#clause-mode-toggle').checked;
-
-        // Set arch properties
-        if (isClauseMode) {
-            pendingArch.isClause = true;
-            pendingArch.externalRole = role;
-            pendingArch.syntacticRole = null;
-            const selectedModelBtn = modal.querySelector('.clause-model-btn.selected');
-            if (selectedModelBtn) {
-                pendingArch.model = selectedModelBtn.dataset.model;
-            }
-        } else {
-            pendingArch.isClause = false;
-            pendingArch.syntacticRole = role;
-            pendingArch.externalRole = null;
-        }
-
-        // Remove pending flag and add to arches
-        delete pendingArch.isPending;
-        arches.push(pendingArch);
-
-        // Clean up - reset arch creation state to allow creating more arches
-        firstArchClick = null;
-        archCreationMode = false;
-        document.querySelectorAll('.word-block').forEach(block => block.classList.remove('arch-selected'));
-        
-        modal._pendingArch = null;
-        modal._isNewArch = false;
-
-        renderSentence();
-        modal.classList.remove('show');
-        showValidationMessage(isClauseMode ? `פסוקית ${role} נוצרה` : `גג עם תפקיד "${role}" נוצר`, 'info');
-    };
-
-    // Override close/cancel behavior for new arch
-    const closeBtn = modal.querySelector('.close');
-    const cancelBtn = modal.querySelector('.btn-secondary');
-
-    const cancelHandler = () => {
-        // Reset arch creation state to allow creating more arches
-        firstArchClick = null;
-        archCreationMode = false;
-        document.querySelectorAll('.word-block').forEach(block => block.classList.remove('arch-selected'));
-        
-        modal._pendingArch = null;
-        modal._isNewArch = false;
-        modal.classList.remove('show');
-        renderSentence(); // Re-render to remove visual indicators
-        showValidationMessage('יצירת גג בוטלה - לא נבחר תפקיד תחבירי', 'warning');
-    };
-
-    closeBtn.onclick = cancelHandler;
-    if (cancelBtn) {
-        cancelBtn.onclick = cancelHandler;
-    }
-
-    // Handle click outside modal
-    modal.onclick = (e) => {
-        if (e.target === modal) {
-            cancelHandler();
-        }
-    };
-
-    modal.classList.add('show');
+    // Simply open the modal with the pending arch - it will handle everything
+    openSyntacticRoleModal(pendingArch);
 }
 
 // Open modal to select syntactic role for arch (with clause upgrade option)
@@ -1419,6 +1334,14 @@ function openSyntacticRoleModal(arch) {
             arches.push(currentArch);
         }
 
+        // Clean up arch creation state to allow creating more arches
+        firstArchClick = null;
+        archCreationMode = false;
+        document.querySelectorAll('.word-block').forEach(block => block.classList.remove('arch-selected'));
+
+        // Clean up modal state
+        modal._currentArch = null;
+
         renderSentence();
         modal.classList.remove('show');
         showValidationMessage(isClauseMode ? `פסוקית ${role} נבחרה` : `חלק תחבירי נבחר: ${role}`, 'info');
@@ -1431,6 +1354,15 @@ function openSyntacticRoleModal(arch) {
             // Pending arch was not saved - show message
             showValidationMessage('יצירת גג בוטלה - לא נבחר תפקיד תחבירי', 'warning');
         }
+
+        // Clean up arch creation state to allow creating more arches
+        firstArchClick = null;
+        archCreationMode = false;
+        document.querySelectorAll('.word-block').forEach(block => block.classList.remove('arch-selected'));
+
+        // Clean up modal state
+        modal._currentArch = null;
+
         modal.classList.remove('show');
     };
 
