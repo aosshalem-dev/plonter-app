@@ -1606,3 +1606,278 @@ body.panel-open .container {
     padding: 10px;
     border-radius: 8px;
 }
+
+/* =============================================
+   MOBILE RESPONSIVE — Horizontal Scroll Approach
+   Words stay on one line, user scrolls horizontally.
+   Arch/roof SVG math requires single-row layout.
+   ============================================= */
+
+/* --- 768px: Tablet / small laptop --- */
+@media (max-width: 768px) {
+    /* Horizontal scroll for sentence (keeps arches working) */
+    .sentence-container {
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        padding-bottom: 15px;
+        justify-content: flex-start;
+    }
+
+    /* Scroll fade hint (pseudo-element on parent) */
+    .sentence-section {
+        position: relative;
+    }
+    .sentence-section::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 40px;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0.9), transparent);
+        pointer-events: none;
+        z-index: 5;
+    }
+
+    /* Details panel: full-width overlay instead of 400px sidebar */
+    .details-panel {
+        width: 100%;
+        right: -100%;
+    }
+    .details-panel.show {
+        right: 0;
+    }
+    body.panel-open .container {
+        margin-right: 0;
+    }
+
+    /* Touch targets: minimum 44px */
+    .add-pos-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+    }
+
+    .part-tag {
+        min-height: 44px;
+        padding: 10px 15px;
+    }
+
+    .btn {
+        min-height: 44px;
+        padding: 12px 20px;
+    }
+
+    .role-btn {
+        min-height: 44px;
+        padding: 15px 20px;
+    }
+
+    .close-panel-btn {
+        width: 44px;
+        height: 44px;
+    }
+
+    /* Prevent accidental text selection on interactive elements */
+    .word-block,
+    .add-pos-btn,
+    .part-tag,
+    .btn,
+    .role-btn,
+    .pos-option,
+    .stage-item {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Role grid: keep 3 columns but tighter */
+    .role-grid {
+        gap: 10px;
+    }
+}
+
+/* --- 600px: Large phone --- */
+@media (max-width: 600px) {
+    /* Header scaling */
+    header h1 {
+        font-size: 1.6em;
+    }
+    .subtitle {
+        font-size: 0.9em;
+    }
+    .welcome-header h1 {
+        font-size: 2em;
+    }
+
+    /* Container padding */
+    .container {
+        padding: 8px;
+    }
+    section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    /* Sentence container: tighter */
+    .sentence-container {
+        gap: 8px 12px;
+        padding: 15px;
+        padding-top: 80px;
+    }
+
+    /* Modal: role grid 2 columns */
+    .role-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .syntactic-role-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    /* Verb forms: 3 columns instead of 5 */
+    .verb-forms-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Gender/number: 2 columns */
+    .gender-number-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Form fields: single column */
+    .details-form {
+        grid-template-columns: 1fr;
+    }
+
+    /* Modal content tighter */
+    .modal-content {
+        padding: 15px;
+        width: 98%;
+        max-height: 90vh;
+    }
+
+    /* Verb voice: stack */
+    .verb-voice-container {
+        flex-direction: column;
+    }
+
+    /* Definiteness buttons: stack */
+    .definiteness-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Stage items: full width */
+    .stages-list {
+        grid-template-columns: 1fr;
+    }
+
+    /* Search input bigger touch target */
+    .search-input {
+        padding: 12px 15px;
+        font-size: 1em;
+    }
+}
+
+/* --- 480px: Small phone --- */
+@media (max-width: 480px) {
+    /* Ultra-compact header */
+    header h1 {
+        font-size: 1.3em;
+    }
+    .subtitle {
+        display: none;
+    }
+    .welcome-header h1 {
+        font-size: 1.6em;
+    }
+    .welcome-header .subtitle {
+        display: block;
+        font-size: 0.8em;
+    }
+
+    /* Container minimal padding */
+    .container {
+        padding: 5px;
+    }
+    section {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+    }
+
+    /* Sentence container: compact */
+    .sentence-container {
+        gap: 6px 8px;
+        padding: 10px;
+        padding-top: 60px;
+    }
+
+    /* Word blocks: tighter but readable */
+    .word-block {
+        padding: 8px 10px;
+    }
+    .word-text {
+        font-size: 1em;
+    }
+
+    /* Modal: single column everything */
+    .role-grid {
+        grid-template-columns: 1fr;
+    }
+    .syntactic-role-options {
+        grid-template-columns: 1fr;
+    }
+    .role-grid-4x3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .clause-role-options {
+        grid-template-columns: 1fr;
+    }
+
+    /* Verb forms: 2 columns */
+    .verb-forms-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Gender/number: 2 columns */
+    .gender-number-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Action buttons: stack vertically, full-width */
+    .modal-actions {
+        flex-direction: column;
+    }
+    .modal-actions .btn {
+        width: 100%;
+    }
+    .details-panel-actions {
+        flex-direction: column;
+    }
+    .details-panel-actions .btn {
+        width: 100%;
+    }
+
+    /* Toolbar buttons: smaller text, tighter */
+    #logical-connection-mode-btn,
+    #delete-mode-btn {
+        font-size: 0.85em;
+        padding: 8px 12px;
+    }
+
+    /* Category section */
+    .category-title {
+        font-size: 1.2em;
+    }
+
+    /* Part tags: compact */
+    .part-tag {
+        padding: 8px 12px;
+        font-size: 0.85em;
+    }
+}
