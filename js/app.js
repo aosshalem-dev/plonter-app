@@ -607,10 +607,10 @@ function renderCombinationLines() {
                 const rect1 = part1.getBoundingClientRect();
                 const rect2 = part2.getBoundingClientRect();
                 
-                const x1 = rect1.left + rect1.width / 2 - containerRect.left;
-                const y1 = rect1.top + rect1.height / 2 - containerRect.top;
-                const x2 = rect2.left + rect2.width / 2 - containerRect.left;
-                const y2 = rect2.top + rect2.height / 2 - containerRect.top;
+                const x1 = rect1.left + rect1.width / 2 - containerRect.left + container.scrollLeft;
+                const y1 = rect1.top + rect1.height / 2 - containerRect.top + container.scrollTop;
+                const x2 = rect2.left + rect2.width / 2 - containerRect.left + container.scrollLeft;
+                const y2 = rect2.top + rect2.height / 2 - containerRect.top + container.scrollTop;
                 
                 if (index === 0) {
                     points.push({ x: x1, y: y1 });
@@ -802,7 +802,7 @@ function createSingleWordArch(wordId) {
         return;
     }
 
-    const height = 80; // Base height for single word arch
+    const height = calculateArchHeight(wordId, wordId);
 
     const arch = {
         id: `arch_${Date.now()}_${Math.random()}`,
@@ -825,6 +825,13 @@ function createSingleWordArch(wordId) {
 
 // Create an arch between two words
 function createArch(wordId1, wordId2) {
+    // Normalize word order: wordId1 = lower index (rightmost in RTL)
+    const idx1 = words.findIndex(w => w.id === wordId1);
+    const idx2 = words.findIndex(w => w.id === wordId2);
+    if (idx1 > idx2) {
+        [wordId1, wordId2] = [wordId2, wordId1];
+    }
+
     // Check if arch already exists
     const exists = arches.some(a =>
         (a.wordId1 === wordId1 && a.wordId2 === wordId2) ||
@@ -833,6 +840,13 @@ function createArch(wordId1, wordId2) {
 
     if (exists) {
         showValidationMessage('קשת כבר קיימת בין המילים האלה', 'warning');
+        return;
+    }
+
+    // Validate matryoshka hierarchy: no partial overlaps allowed
+    const hierarchyError = validateArchHierarchy(wordId1, wordId2);
+    if (hierarchyError) {
+        showValidationMessage(hierarchyError, 'error');
         return;
     }
 
@@ -860,6 +874,34 @@ function createArch(wordId1, wordId2) {
 
     // Immediately open syntactic role modal (required - no arch without role)
     openSyntacticRoleModalForNewArch(arch);
+}
+
+// Validate arch hierarchy: only full nesting (matryoshka) or no overlap allowed
+function validateArchHierarchy(wordId1, wordId2) {
+    const idx1 = words.findIndex(w => w.id === wordId1);
+    const idx2 = words.findIndex(w => w.id === wordId2);
+    const newStart = Math.min(idx1, idx2);
+    const newEnd = Math.max(idx1, idx2);
+
+    for (const arch of arches) {
+        const aIdx1 = words.findIndex(w => w.id === arch.wordId1);
+        const aIdx2 = words.findIndex(w => w.id === arch.wordId2);
+        const aStart = Math.min(aIdx1, aIdx2);
+        const aEnd = Math.max(aIdx1, aIdx2);
+
+        // Skip single-word arches that are contained
+        if (aStart === aEnd) continue;
+
+        // Check for partial overlap (not nested, not disjoint, not identical)
+        const isNested = (newStart >= aStart && newEnd <= aEnd) || (aStart >= newStart && aEnd <= newEnd);
+        const isDisjoint = newEnd < aStart || newStart > aEnd;
+        const isIdentical = newStart === aStart && newEnd === aEnd;
+
+        if (!isNested && !isDisjoint && !isIdentical) {
+            return 'גגות חייבים להיות מקוננים (בבושקה) — חפיפה חלקית אינה מותרת';
+        }
+    }
+    return null; // No error
 }
 
 // Calculate arch height with nesting logic
@@ -943,34 +985,32 @@ function renderArches() {
                 // For RTL Arabic: draw from RIGHT edge of first word to LEFT edge of second word
                 let leftEdge, rightEdge, leftY, rightY;
                 
+                // Scroll compensation: getBoundingClientRect() is viewport-relative,
+                // but SVG is content-relative. Add scroll offsets.
+                const scrollL = container.scrollLeft;
+                const scrollT = container.scrollTop;
+
                 if (isSingleWord) {
                     // Single word: rectangle without bottom (two vertical lines connected by horizontal line on top)
-                    // In RTL: left side of screen = smaller x, right side = larger x
-                    // For word boundary: left edge (smaller x) to right edge (larger x)
-                    leftEdge = rect1.left - containerRect.left; // Left edge of word
-                    rightEdge = rect1.left + rect1.width - containerRect.left; // Right edge of word
-                    leftY = rect1.top - containerRect.top;
-                    rightY = rect1.top - containerRect.top;
+                    leftEdge = rect1.left - containerRect.left + scrollL;
+                    rightEdge = rect1.left + rect1.width - containerRect.left + scrollL;
+                    leftY = rect1.top - containerRect.top + scrollT;
+                    rightY = rect1.top - containerRect.top + scrollT;
                 } else {
                     // Two words: roof spans from the rightmost word to the leftmost word
-                    // In RTL: words flow right-to-left, but on screen, left side = smaller x, right side = larger x
-                    // We want to draw from the outer edges of both words
                     const firstIndex = Math.min(index1, index2);
                     const secondIndex = Math.max(index1, index2);
 
-                    // Get the word blocks for first and second
                     const firstWordId = firstIndex === index1 ? arch.wordId1 : arch.wordId2;
                     const secondWordId = secondIndex === index2 ? arch.wordId2 : arch.wordId1;
                     const firstRect = firstWordId === arch.wordId1 ? rect1 : rect2;
                     const secondRect = secondWordId === arch.wordId2 ? rect2 : rect1;
 
-                    // For RTL: first word (lower index) appears on right side of screen (higher x)
-                    // second word (higher index) appears on left side of screen (lower x)
-                    // Draw from right edge of first word to left edge of second word
-                    rightEdge = firstRect.left + firstRect.width - containerRect.left; // Right edge of first word (rightmost position)
-                    leftEdge = secondRect.left - containerRect.left; // Left edge of second word (leftmost position)
-                    rightY = firstRect.top - containerRect.top;
-                    leftY = secondRect.top - containerRect.top;
+                    // RTL: first word (lower index) = right side, second word (higher index) = left side
+                    rightEdge = firstRect.left + firstRect.width - containerRect.left + scrollL;
+                    leftEdge = secondRect.left - containerRect.left + scrollL;
+                    rightY = firstRect.top - containerRect.top + scrollT;
+                    leftY = secondRect.top - containerRect.top + scrollT;
                 }
                 
                 // Roof height
@@ -1177,29 +1217,41 @@ function renderArches() {
         }
     });
     
-    // Add visual indicator for first click (vertical line from selected word)
+    // Add halo rectangle indicator for first click (semi-transparent rectangle above word)
     if (firstArchClick && archCreationMode) {
         const wordWrapper = container.querySelector(`[data-word-id="${firstArchClick.wordId}"]`);
         if (wordWrapper) {
             const wordBlock = wordWrapper.querySelector('.word-block');
             if (wordBlock) {
                 const rect = wordBlock.getBoundingClientRect();
-                const rightEdge = rect.left - containerRect.left;
-                const y = rect.top - containerRect.top;
-                
-                // Animated vertical line indicator
-                const indicatorLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                indicatorLine.setAttribute('x1', rightEdge);
-                indicatorLine.setAttribute('y1', y);
-                indicatorLine.setAttribute('x2', rightEdge);
-                indicatorLine.setAttribute('y2', y - 100);
-                indicatorLine.setAttribute('stroke', '#667eea');
-                indicatorLine.setAttribute('stroke-width', '3');
-                indicatorLine.setAttribute('stroke-dasharray', '5,5');
-                indicatorLine.style.opacity = '0.6';
-                indicatorLine.style.animation = 'pulse 1s infinite';
-                
-                svg.appendChild(indicatorLine);
+                const x = rect.left - containerRect.left + container.scrollLeft;
+                const y = rect.top - containerRect.top + container.scrollTop;
+                const haloHeight = 100; // Height of halo above word
+
+                const haloRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                haloRect.setAttribute('x', x);
+                haloRect.setAttribute('y', y - haloHeight);
+                haloRect.setAttribute('width', rect.width);
+                haloRect.setAttribute('height', haloHeight);
+                haloRect.setAttribute('rx', 4);
+                haloRect.setAttribute('fill', '#667eea');
+                haloRect.style.opacity = '0.15';
+                haloRect.style.animation = 'pulse 1.5s ease-in-out infinite';
+
+                // Halo border
+                const haloBorder = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                haloBorder.setAttribute('x', x);
+                haloBorder.setAttribute('y', y - haloHeight);
+                haloBorder.setAttribute('width', rect.width);
+                haloBorder.setAttribute('height', haloHeight);
+                haloBorder.setAttribute('rx', 4);
+                haloBorder.setAttribute('fill', 'none');
+                haloBorder.setAttribute('stroke', '#667eea');
+                haloBorder.setAttribute('stroke-width', '2');
+                haloBorder.style.opacity = '0.4';
+
+                svg.appendChild(haloRect);
+                svg.appendChild(haloBorder);
             }
         }
     }
@@ -1244,21 +1296,39 @@ function openSyntacticRoleModal(arch) {
                     </label>
                 </div>
                 <div class="syntactic-role-options" id="syntactic-role-buttons">
-                    <div class="role-grid">
-                        <div class="role-column role-column-green">
-                            <button class="role-btn role-subject-predicate" data-role="נושא">נושא</button>
-                            <button class="role-btn role-subject-predicate" data-role="נשוא">נשוא</button>
-                            <button class="role-btn role-subject-predicate" data-role="מושא">מושא</button>
+                    <div class="role-categories">
+                        <div class="role-category">
+                            <div class="role-category-header role-cat-green" data-category="subject-predicate">
+                                <span>נושא / נשוא</span>
+                                <span class="role-cat-arrow">&#9660;</span>
+                            </div>
+                            <div class="role-category-body role-cat-green-body" data-category-body="subject-predicate">
+                                <button class="role-btn role-subject-predicate" data-role="נושא">נושא</button>
+                                <button class="role-btn role-subject-predicate" data-role="נשוא">נשוא</button>
+                            </div>
                         </div>
-                        <div class="role-column role-column-purple">
-                            <button class="role-btn role-object-description" data-role="תיאור">תיאור</button>
-                            <button class="role-btn role-object-description" data-role="גרעין">גרעין</button>
-                            <button class="role-btn role-object-description" data-role="לוואי סומך">לוואי סומך</button>
+                        <div class="role-category">
+                            <div class="role-category-header role-cat-purple" data-category="verb-complements">
+                                <span>משלימי פועל</span>
+                                <span class="role-cat-arrow">&#9660;</span>
+                            </div>
+                            <div class="role-category-body role-cat-purple-body" data-category-body="verb-complements">
+                                <button class="role-btn role-object-description" data-role="מושא">מושא</button>
+                                <button class="role-btn role-object-description" data-role="תיאור">תיאור</button>
+                            </div>
                         </div>
-                        <div class="role-column role-column-blue">
-                            <button class="role-btn role-nucleus-adjunct" data-role="לוואי שם תואר">לוואי שם תואר</button>
-                            <button class="role-btn role-nucleus-adjunct" data-role="לוואי צירוף יחס">לוואי צירוף יחס</button>
-                            <button class="role-btn role-nucleus-adjunct" data-role="לוואי כינוי רמז">לוואי כינוי רמז</button>
+                        <div class="role-category">
+                            <div class="role-category-header role-cat-blue" data-category="direct-components">
+                                <span>רכיבים ישירים</span>
+                                <span class="role-cat-arrow">&#9660;</span>
+                            </div>
+                            <div class="role-category-body role-cat-blue-body" data-category-body="direct-components">
+                                <button class="role-btn role-nucleus-adjunct" data-role="גרעין">גרעין</button>
+                                <button class="role-btn role-nucleus-adjunct" data-role="לוואי סומך">לוואי סומך</button>
+                                <button class="role-btn role-nucleus-adjunct" data-role="לוואי שם תואר">לוואי שם תואר</button>
+                                <button class="role-btn role-nucleus-adjunct" data-role="לוואי צירוף יחס">לוואי צירוף יחס</button>
+                                <button class="role-btn role-nucleus-adjunct" data-role="לוואי כינוי רמז">לוואי כינוי רמז</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1277,6 +1347,22 @@ function openSyntacticRoleModal(arch) {
             </div>
         `;
         document.body.appendChild(modal);
+
+        // Expandable category headers
+        modal.querySelectorAll('.role-category-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const cat = header.dataset.category;
+                const body = modal.querySelector(`[data-category-body="${cat}"]`);
+                const arrow = header.querySelector('.role-cat-arrow');
+                const isOpen = body.classList.contains('open');
+                body.classList.toggle('open');
+                arrow.textContent = isOpen ? '\u25BC' : '\u25B2'; // ▼ / ▲
+            });
+            // Start expanded
+            const cat = header.dataset.category;
+            const body = modal.querySelector(`[data-category-body="${cat}"]`);
+            body.classList.add('open');
+        });
 
         // Clause mode toggle
         modal.querySelector('#clause-mode-toggle').addEventListener('change', (e) => {
@@ -3232,11 +3318,11 @@ function hasUnsavedChanges() {
         if (key === 'gender' || key === 'number') {
             const genderNumberGroup = document.querySelector('[data-field-key="gender_number"]');
             if (genderNumberGroup) {
-                const selectedButton = genderNumberGroup.querySelector('.gender-number-btn.selected');
+                const selectedButton = genderNumberGroup.querySelector('.gender-number-cell-btn.selected');
                 if (selectedButton) {
                     const currentGender = selectedButton.dataset.gender;
                     const currentNumber = selectedButton.dataset.number;
-                    if (currentGender !== (savedDetails.gender || 'זכר') || 
+                    if (currentGender !== (savedDetails.gender || 'זכר') ||
                         currentNumber !== (savedDetails.number || 'יחיד')) {
                         return true;
                     }
@@ -3352,7 +3438,7 @@ function savePartOfSpeechDetails() {
     // Handle combined gender/number selector (single selection)
     const genderNumberGroup = document.querySelector('[data-field-key="gender_number"]');
     if (genderNumberGroup && (pos.type === 'noun' || pos.type === 'adjective' || pos.type === 'demonstrative')) {
-        const selectedButton = genderNumberGroup.querySelector('.gender-number-btn.selected');
+        const selectedButton = genderNumberGroup.querySelector('.gender-number-cell-btn.selected');
         if (selectedButton) {
             newDetails.gender = selectedButton.dataset.gender;
             newDetails.number = selectedButton.dataset.number;

@@ -1,14 +1,62 @@
 // Combination rules and validation
 
-// Check adjacency: words must be directly adjacent (no skipping)
+// Check adjacency: words must be adjacent, treating complete combination chains as single units
 function checkAdjacency(wordId1, wordId2, words) {
     const index1 = words.findIndex(w => w.id === wordId1);
     const index2 = words.findIndex(w => w.id === wordId2);
-    
+
     if (index1 === -1 || index2 === -1) return false;
-    
-    // Only allow direct adjacency (exactly 1 position apart)
-    return Math.abs(index1 - index2) === 1;
+
+    // Direct adjacency (exactly 1 position apart)
+    if (Math.abs(index1 - index2) === 1) return true;
+
+    // Phrase-aware: get effective span of each word including its complete combination chains
+    const span1 = getPhraseSpan(wordId1, words);
+    const span2 = getPhraseSpan(wordId2, words);
+
+    // Adjacent if spans touch (no gap between them)
+    return span1.max + 1 === span2.min || span2.max + 1 === span1.min;
+}
+
+// Get the index span of a word including all words connected through complete combinations
+function getPhraseSpan(wordId, wordsArr) {
+    const index = wordsArr.findIndex(w => w.id === wordId);
+    let min = index, max = index;
+
+    // Access global combinations array
+    if (typeof combinations === 'undefined' || !combinations.length) {
+        return { min, max };
+    }
+
+    // BFS: find all words reachable through complete, valid, adjacent combinations
+    const visited = new Set([wordId]);
+    const queue = [wordId];
+
+    while (queue.length > 0) {
+        const currentId = queue.shift();
+        const currentIndex = wordsArr.findIndex(w => w.id === currentId);
+
+        combinations.forEach(c => {
+            if (!c.complete || c.type !== 'valid') return;
+
+            let neighborId = null;
+            if (c.wordId1 === currentId) neighborId = c.wordId2;
+            else if (c.wordId2 === currentId) neighborId = c.wordId1;
+
+            if (neighborId && !visited.has(neighborId)) {
+                const neighborIndex = wordsArr.findIndex(w => w.id === neighborId);
+                // Only include if directly adjacent (chain continuity)
+                if (Math.abs(currentIndex - neighborIndex) === 1) {
+                    visited.add(neighborId);
+                    queue.push(neighborId);
+                    min = Math.min(min, neighborIndex);
+                    max = Math.max(max, neighborIndex);
+                }
+            }
+        });
+    }
+
+    return { min, max };
 }
 
 // Calculate definiteness recursively (for Idafa chains, suffix pronouns)

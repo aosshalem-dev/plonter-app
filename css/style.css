@@ -1608,6 +1608,84 @@ body.panel-open .container {
     border-radius: 8px;
 }
 
+/* Expandable role categories for syntactic role modal */
+.role-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.role-category {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.role-category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+}
+
+.role-category-header:active {
+    opacity: 0.8;
+}
+
+.role-cat-arrow {
+    font-size: 12px;
+    transition: transform 0.2s;
+}
+
+.role-cat-green {
+    background: #ecfdf5;
+    color: #065f46;
+}
+
+.role-cat-purple {
+    background: #f5f3ff;
+    color: #5b21b6;
+}
+
+.role-cat-blue {
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+.role-category-body {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 12px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease, padding 0.2s ease;
+}
+
+.role-category-body.open {
+    display: flex;
+    padding: 10px 12px;
+    max-height: 500px;
+}
+
+.role-category-body .role-btn {
+    min-height: 44px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Halo pulse animation */
+@keyframes pulse {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.3; }
+}
+
 /* =============================================
    MOBILE RESPONSIVE — Horizontal Scroll Approach
    Words stay on one line, user scrolls horizontally.
