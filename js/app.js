@@ -255,13 +255,20 @@ function renderSentence() {
         wordText.className = 'word-text';
         wordText.textContent = word.text;
         
-        // Add click handler for arch creation (click on words directly, not parts of speech)
+        // Add click and touch handlers for arch creation (click on words directly, not parts of speech)
         if (!deleteMode && !logicalConnectionMode) {
             wordBlock.style.cursor = 'pointer';
             wordBlock.onclick = (e) => {
                 e.stopPropagation();
                 handleWordClickForArch(word.id);
             };
+            // Explicit touch handler for mobile — ensures word taps are captured
+            // even if synthetic click events are delayed or intercepted by overlays
+            wordBlock.addEventListener('touchend', (e) => {
+                e.preventDefault(); // Prevent delayed click/ghost click
+                e.stopPropagation();
+                handleWordClickForArch(word.id);
+            }, { passive: false });
         }
         
         // Mark as selected if this word is the first click
@@ -995,7 +1002,7 @@ function renderArches() {
                 // Create group for this arch
                 const archGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                 archGroup.dataset.archId = arch.id;
-                archGroup.style.pointerEvents = 'auto';
+                archGroup.style.pointerEvents = deleteMode ? 'auto' : 'none'; // Only intercept in delete mode
                 
                 if (isSingleWord) {
                     // Single word: rectangle without bottom (two vertical lines + horizontal line on top)
@@ -1112,6 +1119,7 @@ function renderArches() {
                     // Click handler for label - open syntactic role modal
                     const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
                     labelGroup.style.cursor = 'pointer';
+                    labelGroup.style.pointerEvents = 'auto'; // Explicit — parent archGroup may be 'none'
                     labelGroup.onclick = (e) => {
                         e.stopPropagation();
                         openSyntacticRoleModal(arch);
@@ -1141,11 +1149,19 @@ function renderArches() {
                     renderSentence();
                 };
                 } else {
-                    archGroup.style.cursor = 'pointer';
-                    // Click to edit
-                    archGroup.onclick = (e) => {
-                        // Don't trigger if clicking on label (handled separately)
-                        if (e.target.tagName === 'g' && e.target.querySelector('text')) return;
+                    // Normal mode: arch lines have pointer-events: none (via archGroup above)
+                    // so clicks/touches pass through to word blocks underneath.
+                    // Add an invisible wider hit area on the horizontal roof line for editing.
+                    const hitArea = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    const hitPadding = 12;
+                    hitArea.setAttribute('x', Math.min(leftEdge, rightEdge));
+                    hitArea.setAttribute('y', roofY - hitPadding);
+                    hitArea.setAttribute('width', Math.abs(rightEdge - leftEdge) || 1);
+                    hitArea.setAttribute('height', hitPadding * 2);
+                    hitArea.setAttribute('fill', 'transparent');
+                    hitArea.style.cursor = 'pointer';
+                    hitArea.style.pointerEvents = 'auto';
+                    hitArea.onclick = (e) => {
                         e.stopPropagation();
                         if (arch.isClause) {
                             openClauseModal(arch);
@@ -1153,6 +1169,7 @@ function renderArches() {
                             openSyntacticRoleModal(arch);
                         }
                     };
+                    archGroup.appendChild(hitArea);
                 }
                 
                 svg.appendChild(archGroup);
