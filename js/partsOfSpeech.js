@@ -225,7 +225,21 @@ function getDefaultDetails(type) {
             gender: 'זכר',
             number: 'יחיד',
             definiteness: 'מיודע',
-            cases: ['יחסה ראשונה', 'יחסה שנייה', 'יחסה שלישית'] // Default all cases checked
+            cases: ['יחסה ראשונה', 'יחסה שנייה', 'יחסה שלישית']
+        };
+    }
+    if (type === 'adjective') {
+        return {
+            gender: 'זכר',
+            number: 'יחיד',
+            definiteness: 'מיודע',
+            cases: ['יחסה ראשונה', 'יחסה שנייה', 'יחסה שלישית']
+        };
+    }
+    if (type === 'demonstrative') {
+        return {
+            gender: 'זכר',
+            number: 'יחיד'
         };
     }
     return {};

@@ -2423,10 +2423,22 @@ function selectPartOfSpeech(type) {
     if (!word) return;
 
     let defaultDetails = {};
-    
-    // Set default noun details
+
+    // Set default details for POS types that need them
     if (type === 'noun') {
         defaultDetails = getDefaultNounDetails();
+    } else if (type === 'adjective') {
+        defaultDetails = {
+            gender: 'זכר',
+            number: 'יחיד',
+            definiteness: 'מיודע',
+            cases: ['יחסה ראשונה', 'יחסה שנייה', 'יחסה שלישית']
+        };
+    } else if (type === 'demonstrative') {
+        defaultDetails = {
+            gender: 'זכר',
+            number: 'יחיד'
+        };
     }
     
     // Add the part of speech
