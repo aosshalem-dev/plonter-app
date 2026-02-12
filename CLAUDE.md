@@ -31,24 +31,22 @@ python3 test_mobile_screenshots.py # Screenshots at 5 viewports for visual revie
 - **POS details saving**: `savePartOfSpeechDetails()` (line ~3279-3427)
 - **POS detail panel creation**: `createGenderNumberSelector()` (line ~2620) — uses class `gender-number-cell-btn`
 - **Combination validation**: `combinations.js` — `checkAdjacency()` (line ~4-12), `validateCombination()` (line ~58+)
-- **First-click indicator**: Dashed vertical line SVG at line ~1180-1205
+- **First-click indicator**: Halo rectangle SVG at line ~1220-1257
 
 ## Known Bugs & Patterns (discovered Feb 2026)
 
-### CSS selector mismatch pattern
-`savePartOfSpeechDetails()` queries `.gender-number-btn.selected` but buttons are created with class `.gender-number-cell-btn`. This causes POS details to always fall through to defaults (masculine singular indefinite). **Lesson**: when saving form data by querying DOM classes, always verify the class names match between creation and query code.
+### FIXED (v3): CSS selector mismatch → `.gender-number-cell-btn` used consistently now.
+### FIXED (v3): SVG scroll compensation → all calculations add `scrollLeft`/`scrollTop`.
+### FIXED (v3): Arch word order → normalized in `createArch()` (wordId1 < wordId2).
+### FIXED (v3): Single-word arch height → uses `calculateArchHeight()` now.
+### FIXED (v3): Adjacency → phrase-aware via `getPhraseSpan()` in combinations.js.
+### FIXED (v3): Matryoshka hierarchy → `validateArchHierarchy()` blocks partial overlaps.
+### FIXED (v3): First-click indicator → halo rectangle, not dashed line.
+### FIXED (v3): Roof menu → 3 expandable categories (נושא/נשוא, משלימי פועל, רכיבים ישירים).
+### FIXED (v3.1): Adjective/demonstrative defaults → now get gender/number/definiteness on creation.
 
-### SVG position calculations need scroll compensation
-`renderArches()` and `renderCombinationLines()` use `getBoundingClientRect()` (viewport-relative) but the SVG is content-relative. On mobile with horizontal scroll, positions drift. Always add `container.scrollLeft` and `container.scrollTop` to all position calculations.
-
-### Arch word order must be normalized
-`createArch(wordId1, wordId2)` stores words in click order. Always normalize so wordId1 = lower index (rightmost in RTL). This prevents SVG rendering bugs when connecting left-to-right.
-
-### Single-word arches use hardcoded height
-`createSingleWordArch()` uses `height = 80` instead of `calculateArchHeight()`. This makes single-word roofs misaligned with multi-word roofs.
-
-### Adjacency check is word-level, not phrase-level
-`checkAdjacency()` requires exactly 1 position apart. This blocks connecting a noun phrase (e.g., "הגבר החתיך") to a preposition ("על") because the adjective sits between them. Need phrase-aware adjacency that treats complete combination chains as single units.
+### Default details only applied to nouns (LESSON)
+`selectPartOfSpeech()` and `getDefaultDetails()` originally only set defaults for nouns. Adjectives/demonstratives got empty details, causing combination validation to fail with "missing gender". **Lesson**: any POS type that participates in combination validation (needs gender/number/definiteness) MUST get defaults on creation.
 
 ### Amitai's design principles (from his emails)
 - **Hierarchical roofs only** — matryoshka/babushka nesting. No partial overlaps. A word alone in a roof group can't create more roofs.
